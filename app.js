@@ -27,20 +27,38 @@ class Asset {
   constructor(name, initVal) {
     this.name = name;
     this.value = initVal;
+    this.increase = 0;
   }
 }
 
 class AssetList {
-  constructor() { this.assets = {}; }
+  constructor() {
+    this.assets = {};
+    this.lowerBound = 0.99;
+    this.upperBound = 1 / this.lowerBound;
+    this.updateTime = 1;
+  }
 
   addAsset(name, val) { this.assets[name] = new Asset(name, val); }
 
   get data() {
     const data = {};
     for (let name in this.assets) {
-      data[name] = this.assets[name].value;
+      data[name] = {
+        value : this.assets[name].value,
+        increase : this.assets[name].increase,
+      };
     }
     return data;
+  }
+
+  updateMarket() {
+    for (let name in this.assets) {
+      const asset = this.assets[name];
+      asset.increase = this.lowerBound +
+                       (Math.random() * (this.upperBound - this.lowerBound));
+      asset.value *= asset.increase;
+    }
   }
 }
 
@@ -65,3 +83,12 @@ assetList.addAsset("Miniature Dragon", 100);
 assetList.addAsset("Dire Wolf Pup ", 100);
 assetList.addAsset("Magic Scrolls", 100);
 assetList.addAsset("Ancient Relics", 100);
+
+function update() {
+  assetList.updateMarket();
+  for (let id in socketList) {
+    socketList[id].emit("assetData", assetList.data);
+  }
+}
+
+setInterval(update, assetList.updateTime * 1000);
