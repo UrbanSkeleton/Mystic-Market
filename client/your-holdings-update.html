@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mystic Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" type="text/css" href="client/style.css">
+</head>
+<body class="bg-gray-900 text-white">
+    
+    <!-- Top Bar -->
+    <div class="flex items-center justify-between bg-gray-800 p-4">
+        <div class="relative">
+            <button id="account-btn" class="flex items-center space-x-2">
+                <img src="profile.jpg" alt="Profile" class="w-8 h-8 rounded-full">
+                <span>Account</span>
+            </button>
+            <div id="account-dropdown" class="hidden absolute bg-gray-700 mt-2 rounded-lg shadow-lg p-2">
+                <a href="/" class="block px-4 py-2 hover:bg-gray-600">Home</a>
+                <a href="/" class="block px-4 py-2 hover:bg-gray-600">User Info</a>
+                <a href="/tips" class="block px-4 py-2 hover:bg-gray-600">Tips</a>
+            </div>
+        </div>
+        <div class="flex space-x-6">
+            <div class="flex items-center space-x-2">
+                <span>Gold Coins:</span>
+                <span id="coins">1000</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span>Portfolio Value:</span>
+                <span id="portfolio-value">0</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span>Today's Gain:</span>
+                <span id="todays-gain" class="text-green-400">0%</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-2 gap-4 p-4">
+        <!-- Left Side -->
+        <div>
+            <!-- Graph -->
+            <div id="history-graph-container" class="bg-gray-800 p-4 rounded-lg">
+                <h2 class="text-lg font-bold">Market History</h2>
+            </div>
+            
+            <!-- Holdings List -->
+            <div class="mt-4 bg-gray-800 p-4 rounded-lg max-h-64 overflow-y-auto">
+                <h2 class="text-lg font-bold">Your Holdings</h2>
+                <div id="holdings-list"></div>
+            </div>
+        </div>
+        
+        <!-- Right Side -->
+        <div>
+            <!-- Market List -->
+            <div class="bg-gray-800 p-4 rounded-lg max-h-64 overflow-y-auto">
+                <h2 class="text-lg font-bold">Market List</h2>
+                <div id="market-list"></div>
+            </div>
+            
+            <!-- News Feed -->
+            <div class="mt-4 bg-gray-800 p-4 rounded-lg max-h-64 overflow-y-auto">
+                <h2 class="text-lg font-bold">News Feed</h2>
+                <div id="news-feed"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="client/js/script.js"></script>
+    <script>
+        document.getElementById('account-btn').addEventListener('click', function() {
+            document.getElementById('account-dropdown').classList.toggle('hidden');
+        });
+
+        let coins = 1000;
+        let portfolioValue = 0;
+        let previousPortfolioValue = 0;
+        let holdings = {};
+
+        function updateUI() {
+            document.getElementById("coins").innerText = coins;
+            document.getElementById("portfolio-value").innerText = portfolioValue;
+            let gain = ((portfolioValue - previousPortfolioValue) / (previousPortfolioValue || 1)) * 100;
+            document.getElementById("todays-gain").innerText = gain.toFixed(2) + "%";
+        }
+
+        function buyAsset(asset, price) {
+            if (coins >= price) {
+                coins -= price;
+                holdings[asset] = (holdings[asset] || 0) + 1;
+                calculatePortfolioValue();
+                updateHoldingsList();
+                updateUI();
+            }
+        }
+
+        function sellAsset(asset, price) {
+            if (holdings[asset] && holdings[asset] > 0) {
+                holdings[asset] -= 1;
+                coins += price;
+                if (holdings[asset] === 0) {
+                    delete holdings[asset];
+                }
+                calculatePortfolioValue();
+                updateHoldingsList();
+                updateUI();
+            }
+        }
+
+        function calculatePortfolioValue() {
+            previousPortfolioValue = portfolioValue;
+            portfolioValue = Object.keys(holdings).reduce((total, asset) => {
+                let price = Math.random() * 100 + 50;
+                return total + holdings[asset] * price;
+            }, 0);
+        }
+
+        function updateHoldingsList() {
+            let holdingsDiv = document.getElementById("holdings-list");
+            holdingsDiv.innerHTML = "";
+            Object.keys(holdings).forEach(asset => {
+                let price = Math.random() * 100 + 50;
+                let div = document.createElement("div");
+                div.className = "flex justify-between p-2 bg-gray-700 rounded-lg my-2";
+                div.innerHTML = `
+                    <span>${asset} x${holdings[asset]}</span>
+                    <span>${(holdings[asset] * price).toFixed(2)} coins</span>
+                    <button onclick="sellAsset('${asset}', ${price})" class="bg-red-500 px-2 py-1 rounded">Sell</button>
+                `;
+                holdingsDiv.appendChild(div);
+            });
+        }
+
+        function loadMarket() {
+            let marketDiv = document.getElementById("market-list");
+            let assets = ["Enchanted Sword", "Cursed Dagger", "Dragonbone Bow", "Runed Shield", "Mithril Armor"];
+            marketDiv.innerHTML = "";
+            assets.forEach(asset => {
+                let price = Math.random() * 100 + 50;
+                let div = document.createElement("div");
+                div.className = "flex justify-between p-2 bg-gray-700 rounded-lg my-2";
+                div.innerHTML = `
+                    <span>${asset} - ${price.toFixed(2)} coins</span>
+                    <button onclick="buyAsset('${asset}', ${price})" class="bg-green-500 px-2 py-1 rounded">Buy</button>
+                `;
+                marketDiv.appendChild(div);
+            });
+        }
+
+        loadMarket();
+        updateUI();
+    </script>
+</body>
+</html>
