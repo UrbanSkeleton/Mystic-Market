@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Tips</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const newsFeed = document.getElementById("newsFeed");
+            const newsList = [
+                { event: "📈 Legendary Blacksmith Returns", description: "A master smith enhances enchanted swords, increasing demand." },
+                { event: "📉 Magic Ban Enforced", description: "Local authorities outlaw enchanted weaponry, reducing value." },
+                { event: "📈 Assassins' Guild Expansion", description: "A rising demand for stealth weapons boosts prices." },
+                { event: "📉 Curse Removal Ritual Discovered", description: "A way to cleanse curses makes these daggers less desirable." },
+                { event: "📈 Dragon Sightings Increase", description: "More dragons mean more need for specialized hunting weapons." },
+                { event: "📉 Dragon Conservation Act", description: "Hunting bans make dragonbone bows illegal in most regions." },
+                { event: "📈 Ancient Rune Rediscovered", description: "Scholars decipher old runes, improving the shield’s power." },
+                { event: "📉 Magic Wane", description: "A surge of anti-magic energy weakens all enchanted items." },
+                { event: "📈 Dwarven Mines Reopen", description: "A new source of mithril is found, increasing its utility." },
+                { event: "📉 Alchemy Breakthrough", description: "A synthetic alternative reduces the demand for true mithril." },
+                { event: "📈 Outbreak of Plague", description: "The sick and injured scramble to buy potions." },
+                { event: "📉 Herbal Remedy Discovery", description: "A cheaper alternative lowers demand." },
+                { event: "📈 Mage Tournament Announced", description: "Demand surges as spellcasters prepare for competition." },
+                { event: "📉 Anti-Magic Zone Declared", description: "Many regions prohibit magic use, reducing sales." },
+                { event: "📈 Thieves' Guild War", description: "Criminals seek stealth solutions, driving up demand." },
+                { event: "📉 Anti-Invisibility Wards Installed", description: "Authorities deploy countermeasures, reducing effectiveness." },
+                { event: "📈 Grand Lottery Opens", description: "Superstitious buyers hoard tonics for better odds." },
+                { event: "📉 Alchemy Fraud Exposed", description: "A scandal reveals that some tonics are mere sugar water." },
+                { event: "📈 Ancient King Seeks Eternal Life", description: "A wealthy monarch is buying up all known stock." },
+                { event: "📉 Potion Side Effects Discovered", description: "Users report strange transformations instead of immortality." }
+            ];
+
+            function generateRandomNews() {
+                const randomNews = newsList[Math.floor(Math.random() * newsList.length)];
+                const newsItem = document.createElement("div");
+                newsItem.classList.add("p-2", "border-b", "border-gray-700");
+                newsItem.innerHTML = `<strong>${randomNews.event}</strong>: ${randomNews.description} <span class='text-gray-400 text-sm'>(${new Date().toLocaleTimeString()})</span>`;
+                newsFeed.prepend(newsItem);
+            }
+
+            setInterval(generateRandomNews, 5000);
+        });
+    </script>
+</head>
+<body class="bg-gray-900 text-white p-6">
+    <!-- Top Bar -->
+    <div class="bg-gray-800 p-4 flex items-center justify-between">
+        <div class="relative">
+            <button class="flex items-center space-x-2" id="accountButton">
+                <img src="profile.jpg" alt="Profile" class="w-8 h-8 rounded-full">
+                <span>Account</span>
+            </button>
+            <div id="accountDropdown" class="absolute hidden bg-gray-700 p-2 rounded shadow-lg">
+                <a href="home.html" class="block p-2">Home</a>
+                <a href="profile.html" class="block p-2">User Info</a>
+                <a href="tips.html" class="block p-2">Tips</a>
+            </div>
+        </div>
+        <div class="flex space-x-4">
+            <div class="flex items-center space-x-2">
+                <img src="coins-icon.png" alt="Coins" class="w-6 h-6">
+                <span>1000</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span>Portfolio Value:</span>
+                <span>$10,000</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span>Today's Gain:</span>
+                <span class="text-green-500">+5%</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- News Feed Section -->
+    <div class="max-w-4xl mx-auto bg-gray-800 p-6 rounded-lg mt-6">
+        <h1 class="text-2xl font-bold text-center mb-4">Live Market News</h1>
+        <div id="newsFeed" class="h-64 overflow-y-scroll border border-gray-700 p-4 bg-gray-900 rounded-lg"></div>
+    </div>
+</body>
+</html>
