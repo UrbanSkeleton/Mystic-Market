@@ -4,6 +4,10 @@ const serv = require("http").Server(app);
 
 app.get("/",
         function(req, res) { res.sendFile(__dirname + "/client/index.html"); });
+app.get("/tips",
+        function(
+            req,
+            res) { res.sendFile(__dirname + "/client/investment_tips.html"); });
 app.use("/client", express.static(__dirname + "/client"));
 
 serv.listen(2000);
@@ -24,7 +28,7 @@ io.sockets.on("connection", function(socket) {
 });
 
 class Asset {
-  constructor(name, initVal) {
+  constructor(name, initVal = Math.random() * 99 + 1) {
     this.name = name;
     this.value = initVal;
     this.increase = 0;
@@ -34,7 +38,7 @@ class Asset {
 class AssetList {
   constructor() {
     this.assets = {};
-    this.lowerBound = 0.99;
+    this.lowerBound = 0.95;
     this.upperBound = 1 / this.lowerBound;
     this.updateTime = 1;
   }
@@ -55,6 +59,11 @@ class AssetList {
   updateMarket() {
     for (let name in this.assets) {
       const asset = this.assets[name];
+      // if (Math.random() <= 0.01)
+      //   asset.increase = 0.2;
+      // else if (Math.random() <= 0.01)
+      //   asset.increase = 5;
+      // else
       asset.increase = this.lowerBound +
                        (Math.random() * (this.upperBound - this.lowerBound));
       asset.value *= asset.increase;
@@ -63,26 +72,26 @@ class AssetList {
 }
 
 const assetList = new AssetList();
-assetList.addAsset("Enchanted Sword", 100);
-assetList.addAsset("Cursed Dagger", 100);
-assetList.addAsset("Dragonbone Bow ", 100);
-assetList.addAsset("Runed Shield", 100);
-assetList.addAsset("Mithril Armor ", 100);
-assetList.addAsset("Healing Potion", 100);
-assetList.addAsset("Mana Elixir ", 100);
-assetList.addAsset("Invisibility Draught", 100);
-assetList.addAsset("Luck Tonic ", 100);
-assetList.addAsset("Elixir of Immortality ", 100);
-assetList.addAsset("Phoenix Feather ", 100);
-assetList.addAsset("Shadow Essence ", 100);
-assetList.addAsset("Starlit Crystal ", 100);
-assetList.addAsset("Troll’s Blood", 100);
-assetList.addAsset("Fairy Dust ", 100);
-assetList.addAsset("Baby Gryphon ", 100);
-assetList.addAsset("Miniature Dragon", 100);
-assetList.addAsset("Dire Wolf Pup ", 100);
-assetList.addAsset("Magic Scrolls", 100);
-assetList.addAsset("Ancient Relics", 100);
+assetList.addAsset("Enchanted Sword");
+assetList.addAsset("Cursed Dagger");
+assetList.addAsset("Dragonbone Bow");
+assetList.addAsset("Runed Shield");
+assetList.addAsset("Mithril Armor");
+assetList.addAsset("Healing Potion");
+assetList.addAsset("Mana Elixir");
+assetList.addAsset("Invisibility Draught");
+assetList.addAsset("Luck Tonic");
+assetList.addAsset("Elixir of Immortality");
+assetList.addAsset("Phoenix Feather");
+assetList.addAsset("Shadow Essence");
+assetList.addAsset("Starlit Crystal");
+assetList.addAsset("Troll’s Blood");
+assetList.addAsset("Fairy Dust");
+assetList.addAsset("Baby Gryphon");
+assetList.addAsset("Miniature Dragon");
+assetList.addAsset("Dire Wolf Pup");
+assetList.addAsset("Magic Scrolls");
+assetList.addAsset("Ancient Relics");
 
 function update() {
   assetList.updateMarket();
