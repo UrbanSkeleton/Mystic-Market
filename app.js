@@ -11,5 +11,7 @@ serv.listen(2000);
 console.log("Server Running");
 
 const io = require("socket.io")(serv, {});
-io.sockets.on("connection",
-              function(socket) { console.log("Client Connected"); });
+io.sockets.on("connection", function(socket) {
+  console.log("Client Connected");
+  socket.emit("helloWorld");
+});
