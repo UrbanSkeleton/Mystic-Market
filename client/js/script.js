@@ -1,3 +1,5 @@
 const socket = io();
 
-socket.on("helloWorld", function() { console.log("hello world"); });
+let assetData;
+
+socket.on("assetData", function(data) { assetData = data; });

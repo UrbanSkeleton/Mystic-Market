@@ -45,7 +45,23 @@ class AssetList {
 }
 
 const assetList = new AssetList();
-assetList.addAsset("potion", 100);
-assetList.addAsset("sword", 100);
-assetList.addAsset("mushroom", 100);
-assetList.addAsset("ironOre", 100);
+assetList.addAsset("Enchanted Sword", 100);
+assetList.addAsset("Cursed Dagger", 100);
+assetList.addAsset("Dragonbone Bow ", 100);
+assetList.addAsset("Runed Shield", 100);
+assetList.addAsset("Mithril Armor ", 100);
+assetList.addAsset("Healing Potion", 100);
+assetList.addAsset("Mana Elixir ", 100);
+assetList.addAsset("Invisibility Draught", 100);
+assetList.addAsset("Luck Tonic ", 100);
+assetList.addAsset("Elixir of Immortality ", 100);
+assetList.addAsset("Phoenix Feather ", 100);
+assetList.addAsset("Shadow Essence ", 100);
+assetList.addAsset("Starlit Crystal ", 100);
+assetList.addAsset("Troll’s Blood", 100);
+assetList.addAsset("Fairy Dust ", 100);
+assetList.addAsset("Baby Gryphon ", 100);
+assetList.addAsset("Miniature Dragon", 100);
+assetList.addAsset("Dire Wolf Pup ", 100);
+assetList.addAsset("Magic Scrolls", 100);
+assetList.addAsset("Ancient Relics", 100);
