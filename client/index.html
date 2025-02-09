@@ -1,18 +1,102 @@
-<html>
-	<head>
-		<meta charset="utf-8" lang="en">
-		<link rel="stylesheet" type="text/css" href="client/style.css">
-		<title>Game Test</title>
-	</head>
-	<body>
-		<div id="main-container">
-			<div id="market-list">
-				
-			</div>
-		</div>
-		<div id="script-container">
-			<script src="/socket.io/socket.io.js"></script>
-			<script src="client/js/script.js"></script>
-		</div>
-	</body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mystic Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" type="text/css" href="client/style.css">
+</head>
+<body class="bg-gray-900 text-white">
+    
+    <!-- Top Bar -->
+    <div class="flex items-center justify-between bg-gray-800 p-4">
+        <div class="relative">
+            <button id="account-btn" class="flex items-center space-x-2">
+                <img src="profile.jpg" alt="Profile" class="w-8 h-8 rounded-full">
+                <span>Account</span>
+            </button>
+            <div id="account-dropdown" class="hidden absolute bg-gray-700 mt-2 rounded-lg shadow-lg p-2">
+                <a href="#" class="block px-4 py-2 hover:bg-gray-600">Home</a>
+                <a href="#" class="block px-4 py-2 hover:bg-gray-600">User Info</a>
+                <a href="#" class="block px-4 py-2 hover:bg-gray-600">Tips</a>
+            </div>
+        </div>
+        <div class="flex space-x-6">
+            <div class="flex items-center space-x-2">
+                <span>Gold Coins:</span>
+                <span id="coins">1000</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span>Portfolio Value:</span>
+                <span id="portfolio-value">5000</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span>Today's Gain:</span>
+                <span id="todays-gain" class="text-green-400">+5%</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-2 gap-4 p-4">
+        <!-- Left Side -->
+        <div>
+            <!-- Graph -->
+            <div id="history-graph-container" class="bg-gray-800 p-4 rounded-lg">
+                <h2 class="text-lg font-bold">Market History</h2>
+            </div>
+            
+            <!-- Asset Dropdown -->
+            <div class="mt-4">
+                <label for="asset-dropdown" class="block text-lg font-bold">Select Asset:</label>
+                <select id="asset-dropdown" class="w-full p-2 bg-gray-700 rounded-lg">
+                    <option value="Enchanted Sword">Enchanted Sword</option>
+                    <option value="Cursed Dagger">Cursed Dagger</option>
+                    <option value="Dragonbone Bow">Dragonbone Bow</option>
+                    <option value="Runed Shield">Runed Shield</option>
+                    <option value="Mithril Armor">Mithril Armor</option>
+                    <option value="Healing Potion">Healing Potion</option>
+                    <option value="Mana Elixir">Mana Elixir</option>
+                    <option value="Invisibility Draught">Invisibility Draught</option>
+                    <option value="Luck Tonic">Luck Tonic</option>
+                    <option value="Elixir of Immortality">Elixir of Immortality</option>
+                    <option value="Phoenix Feather">Phoenix Feather</option>
+                    <option value="Shadow Essence">Shadow Essence</option>
+                    <option value="Starlit Crystal">Starlit Crystal</option>
+                    <option value="Troll’s Blood">Troll’s Blood</option>
+                    <option value="Fairy Dust">Fairy Dust</option>
+                    <option value="Baby Gryphon">Baby Gryphon</option>
+                    <option value="Miniature Dragon">Miniature Dragon</option>
+                    <option value="Dire Wolf Pup">Dire Wolf Pup</option>
+                    <option value="Magic Scrolls">Magic Scrolls</option>
+                    <option value="Ancient Relics">Ancient Relics</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Right Side -->
+        <div>
+            <!-- Market List -->
+            <div class="bg-gray-800 p-4 rounded-lg max-h-64 overflow-y-auto">
+                <h2 class="text-lg font-bold">Market List</h2>
+                <div id="market-list"></div>
+            </div>
+            
+            <!-- News Feed -->
+            <div class="mt-4 bg-gray-800 p-4 rounded-lg max-h-64 overflow-y-auto">
+                <h2 class="text-lg font-bold">News Feed</h2>
+                <div id="news-feed"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="client/js/script.js"></script>
+    <script>
+        document.getElementById('account-btn').addEventListener('click', function() {
+            document.getElementById('account-dropdown').classList.toggle('hidden');
+        });
+    </script>
+</body>
 </html>
