@@ -90,7 +90,7 @@ class Asset {
 class AssetList {
   constructor() {
     this.assets = {};
-    this.updateTime = 1;
+    this.updateTime = 20;
   }
 
   addAsset(name, val) { this.assets[name] = new Asset(name, val); }
