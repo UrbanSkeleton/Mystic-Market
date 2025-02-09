@@ -58,11 +58,18 @@ function updateGraph() {
                 .domain([ 0, marketHistory.length - 1 ]) // Present on the right
                 .range([ 0, width - margin.left - margin.right ]);
 
-  const y =
-      d3.scaleLinear()
-          .domain([ d3.min(data, d => d.value), d3.max(data, d => d.value) ])
-          .nice()
-          .range([ height - margin.top - margin.bottom, 0 ]);
+  // Set the y-scale with some padding for the min and max values
+  const yMin = d3.min(data, d => d.value);
+  const yMax = d3.max(data, d => d.value);
+
+  const padding = 0.05; // 5% padding around the min/max values
+
+  const y = d3.scaleLinear()
+                .domain([
+                  yMin - (yMax - yMin) * padding, yMax + (yMax - yMin) * padding
+                ]) // Add padding
+                .nice()
+                .range([ height - margin.top - margin.bottom, 0 ]);
 
   // X-axis
   svg.append("g")
@@ -125,7 +132,7 @@ document.getElementById("asset-dropdown")
 socket.on("assetData", function(data) {
   assetData = data;
   marketHistory.unshift(assetData);
-  if (marketHistory.length > 50)
+  if (marketHistory.length > 500)
     marketHistory.pop();
   updateMarketList();
 });

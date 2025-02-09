@@ -27,19 +27,19 @@ io.sockets.on("connection", function(socket) {
   socketList[id] = socket;
 });
 
+function rand(min, max) { return min + Math.random() * (max - min); }
+
 class Asset {
-  constructor(name, initVal = Math.random() * 99 + 1) {
+  constructor(name, initVal = rand(1, 100)) {
     this.name = name;
     this.value = initVal;
-    this.increase = 0;
+    this.prev = this.value;
   }
 }
 
 class AssetList {
   constructor() {
     this.assets = {};
-    this.lowerBound = 0.95;
-    this.upperBound = 1 / this.lowerBound;
     this.updateTime = 1;
   }
 
@@ -50,7 +50,7 @@ class AssetList {
     for (let name in this.assets) {
       data[name] = {
         value : this.assets[name].value,
-        increase : this.assets[name].increase,
+        increase : this.assets[name].value - this.assets[name].value,
       };
     }
     return data;
@@ -59,14 +59,9 @@ class AssetList {
   updateMarket() {
     for (let name in this.assets) {
       const asset = this.assets[name];
-      // if (Math.random() <= 0.01)
-      //   asset.increase = 0.2;
-      // else if (Math.random() <= 0.01)
-      //   asset.increase = 5;
-      // else
-      asset.increase = this.lowerBound +
-                       (Math.random() * (this.upperBound - this.lowerBound));
-      asset.value *= asset.increase;
+      const increase = rand(-3, 3);
+      asset.value += increase;
+      asset.value = Math.max(1, asset.value);
     }
   }
 }
@@ -100,4 +95,4 @@ function update() {
   }
 }
 
-setInterval(update, assetList.updateTime * 1000);
+setInterval(update, assetList.updateTime * 10);
