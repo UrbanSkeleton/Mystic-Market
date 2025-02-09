@@ -1,7 +1,7 @@
 # Mystic-Market
 Fantasy asset trading game.
 
-How to run server:
+To run server:
 Install node.js, epxress, and socket.io.
 Run app.js from your terminal.
 
