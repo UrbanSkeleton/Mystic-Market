@@ -3,8 +3,10 @@ let assetData;
 let holdings;
 const marketHistory = [];
 let selectedAsset = "Healing Potion";
+let portValue = 500;
+let prevPortValue = 500;
 
-let gold = 0;
+let gold = 500;
 
 function rnd(val) { return Math.round(val * 100) / 100; }
 
@@ -35,7 +37,8 @@ function updateHoldingsList() {
   const holdingList = document.querySelector("#holdings-list");
   holdingList.innerHTML = "";
 
-  let totalValue = gold;
+  prevPortValue = portValue;
+  portValue = gold;
 
   for (let name in holdings) {
     const amount = holdings[name];
@@ -45,11 +48,14 @@ function updateHoldingsList() {
     holdingElement.innerHTML = `${name} - ${amount}`;
     holdingList.appendChild(holdingElement);
 
-    totalValue += amount * assetData[name].value;
+    portValue += amount * assetData[name].value;
   }
 
   document.getElementById("portValue").innerHTML =
-      "Portfolio Value: " + rnd(totalValue);
+      "Portfolio Value: " + rnd(portValue);
+  document.getElementById("gain").innerHTML =
+      "Today's Gain: " +
+      rnd((portValue - prevPortValue) / prevPortValue * 100) + "%";
 }
 
 // Event listener for dropdown selection change
@@ -91,3 +97,7 @@ document.getElementById("buyButton").onclick =
     function() { socket.emit("buy", {name : selectedAsset, amount : 1}); };
 document.getElementById("sellButton").onclick =
     function() { socket.emit("sell", {name : selectedAsset, amount : 1}); };
+document.getElementById("buy10Button").onclick =
+    function() { socket.emit("buy", {name : selectedAsset, amount : 10}); };
+document.getElementById("sell10Button").onclick =
+    function() { socket.emit("sell", {name : selectedAsset, amount : 10}); };

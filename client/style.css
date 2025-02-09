@@ -6,19 +6,19 @@
 
 #buttonContainer {}
 
-#buyButton {
+.buyButton {
 	padding: 0px;
 	padding-inline: 10px;
-	margin-left: 20px;
+	margin-left: 5px;
 	color: rgb(74 222 128);
 	border-radius: 5px;
 	background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));;
 }
 
-#sellButton {
+.sellButton {
 	padding: 0px;
 	padding-inline: 10px;
-	margin-left: 20px;
+	margin-left: 5px;
 	color: rgb(222, 74, 74);
 	border-radius: 5px;
 	background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));;

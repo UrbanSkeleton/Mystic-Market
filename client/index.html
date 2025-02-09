@@ -13,7 +13,7 @@
     <div class="flex items-center justify-between bg-gray-800 p-4">
         <div class="relative">
             <button id="account-btn" class="flex items-center space-x-2">
-                <img src="profile.jpg" alt="Profile" class="w-8 h-8 rounded-full">
+                <img src="client/pfp.png" alt="Profile" class="w-8 h-8 rounded-full">
                 <span>Account</span>
             </button>
             <div id="account-dropdown" class="hidden absolute bg-gray-700 mt-2 rounded-lg shadow-lg p-2">
@@ -31,7 +31,7 @@
                 <span>Portfolio Value:</span>
                 <span id="portfolio-value">5000</span>
             </div>
-            <div class="flex items-center space-x-2">
+            <div id="gain" class="flex items-center space-x-2">
                 <span>Today's Gain:</span>
                 <span id="todays-gain" class="text-green-b">+5%</span>
             </div>
@@ -76,8 +76,10 @@
                 </div>
                 <div id="buttonContainer">
                     Buy or sell:
-                    <button id="buyButton">+1</button>
-                    <button id="sellButton">-1</button>
+                    <button id="sell10Button" class="sellButton">-10</button>
+                    <button id="sellButton" class="sellButton">-1</button>
+                    <button id="buyButton" class="buyButton">+1</button>
+                    <button id="buy10Button" class="buyButton">+10</button>
                 </div>
             </div>
 

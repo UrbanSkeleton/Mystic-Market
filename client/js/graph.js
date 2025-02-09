@@ -26,14 +26,12 @@ function updateGraph() {
                 .domain([ 0, marketHistory.length - 1 ]) // Present on the right
                 .range([ 0, width - margin.left - margin.right ]);
 
-  // Set the y-scale with some padding for the min and max values
   const yMin = d3.min(data, d => d.value);
   const yMax = d3.max(data, d => d.value);
-
-  const padding = 0.05; // 5% padding around the min/max values
+  const padding = 0.05;
 
   const y = d3.scaleLinear()
-                .domain([ 0, yMax + (yMax - yMin) * padding ]) // Start from 0
+                .domain([ 0, yMax + (yMax - yMin) * padding ])
                 .nice()
                 .range([ height - margin.top - margin.bottom, 0 ]);
 
@@ -59,8 +57,6 @@ function updateGraph() {
       .attr("text-anchor", "middle")
       .text("Value");
 
-  const line = d3.line().x(d => x(d.index)).y(d => y(d.value));
-
   const tooltip = container.append("div")
                       .attr("class", "tooltip")
                       .style("position", "absolute")
@@ -69,11 +65,19 @@ function updateGraph() {
                       .style("border", "1px solid black")
                       .style("display", "none");
 
-  // Draw the line
-  const path = svg.append("path")
-                   .datum(data)
-                   .attr("fill", "none")
-                   .attr("stroke", "steelblue")
-                   .attr("stroke-width", 2)
-                   .attr("d", line)
+  // Draw segmented lines based on increasing or decreasing trend
+  for (let i = 0; i < data.length - 1; i++) {
+    const start = data[i];
+    const end = data[i + 1];
+
+    svg.append("line")
+        .attr("x1", x(start.index))
+        .attr("y1", y(start.value))
+        .attr("x2", x(end.index))
+        .attr("y2", y(end.value))
+        .attr("stroke",
+              end.value >= start.value ? "rgb(222, 74, 74)" : "rgb(74 222 128)")
+        .attr("stroke-width", 2)
+        .attr("fill", "none");
+  }
 }

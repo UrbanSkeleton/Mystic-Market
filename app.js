@@ -33,7 +33,7 @@ io.sockets.on("connection", function(socket) {
 function rand(min, max) { return min + Math.random() * (max - min); }
 
 class User {
-  constructor(socket, gold = 500) {
+  constructor(socket, gold = 1000) {
     this.socket = socket;
 
     this.gold = gold;
@@ -90,7 +90,7 @@ class Asset {
 class AssetList {
   constructor() {
     this.assets = {};
-    this.updateTime = 15;
+    this.updateTime = 1;
   }
 
   addAsset(name, val) { this.assets[name] = new Asset(name, val); }
