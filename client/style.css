@@ -1,3 +1,25 @@
-.market-elem {
-	border: 1px;
+#assetInterface {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+#buttonContainer {}
+
+#buyButton {
+	padding: 0px;
+	padding-inline: 10px;
+	margin-left: 20px;
+	color: rgb(74 222 128);
+	border-radius: 5px;
+	background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));;
+}
+
+#sellButton {
+	padding: 0px;
+	padding-inline: 10px;
+	margin-left: 20px;
+	color: rgb(222, 74, 74);
+	border-radius: 5px;
+	background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));;
 }

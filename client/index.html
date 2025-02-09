@@ -25,15 +25,15 @@
         <div class="flex space-x-6">
             <div class="flex items-center space-x-2">
                 <span>Gold Coins:</span>
-                <span id="coins">1000</span>
+                <span id="coins">0</span>
             </div>
-            <div class="flex items-center space-x-2">
+            <div id="portValue" class="flex items-center space-x-2">
                 <span>Portfolio Value:</span>
                 <span id="portfolio-value">5000</span>
             </div>
             <div class="flex items-center space-x-2">
                 <span>Today's Gain:</span>
-                <span id="todays-gain" class="text-green-400">+5%</span>
+                <span id="todays-gain" class="text-green-b">+5%</span>
             </div>
         </div>
     </div>
@@ -47,30 +47,44 @@
             </div>
             
             <!-- Asset Dropdown -->
-            <div class="mt-4">
-                <label for="asset-dropdown" class="block text-lg font-bold">Select Asset:</label>
-                <select id="asset-dropdown" class="w-full p-2 bg-gray-700 rounded-lg">
-                    <option value="Enchanted Sword">Enchanted Sword</option>
-                    <option value="Cursed Dagger">Cursed Dagger</option>
-                    <option value="Dragonbone Bow">Dragonbone Bow</option>
-                    <option value="Runed Shield">Runed Shield</option>
-                    <option value="Mithril Armor">Mithril Armor</option>
-                    <option value="Healing Potion">Healing Potion</option>
-                    <option value="Mana Elixir">Mana Elixir</option>
-                    <option value="Invisibility Draught">Invisibility Draught</option>
-                    <option value="Luck Tonic">Luck Tonic</option>
-                    <option value="Elixir of Immortality">Elixir of Immortality</option>
-                    <option value="Phoenix Feather">Phoenix Feather</option>
-                    <option value="Shadow Essence">Shadow Essence</option>
-                    <option value="Starlit Crystal">Starlit Crystal</option>
-                    <option value="Troll’s Blood">Troll’s Blood</option>
-                    <option value="Fairy Dust">Fairy Dust</option>
-                    <option value="Baby Gryphon">Baby Gryphon</option>
-                    <option value="Miniature Dragon">Miniature Dragon</option>
-                    <option value="Dire Wolf Pup">Dire Wolf Pup</option>
-                    <option value="Magic Scrolls">Magic Scrolls</option>
-                    <option value="Ancient Relics">Ancient Relics</option>
-                </select>
+            <div class="mt-4" id="assetInterface">
+                <div>
+                    <label for="asset-dropdown" class="block text-lg font-bold">Select Asset:</label>
+                    <select id="asset-dropdown" class="w-full p-2 bg-gray-700 rounded-lg">
+                        <option value="Healing Potion">Healing Potion (10 gold)</option>
+                        <option value="Mana Elixir">Mana Elixir (12 gold)</option>
+                        <option value="Invisibility Draught">Invisibility Draught (15 gold)</option>
+                        <option value="Luck Tonic">Luck Tonic (18 gold)</option>
+                        <option value="Troll’s Blood">Troll’s Blood (20 gold)</option>
+                        <option value="Fairy Dust">Fairy Dust (25 gold)</option>
+                        <option value="Magic Scrolls">Magic Scrolls (30 gold)</option>
+                        <option value="Shadow Essence">Shadow Essence (35 gold)</option>
+                        <option value="Phoenix Feather">Phoenix Feather (40 gold)</option>
+                        <option value="Starlit Crystal">Starlit Crystal (50 gold)</option>
+                        <option value="Ancient Relics">Ancient Relics (60 gold)</option>
+                        <option value="Runed Shield">Runed Shield (75 gold)</option>
+                        <option value="Cursed Dagger">Cursed Dagger (80 gold)</option>
+                        <option value="Enchanted Sword">Enchanted Sword (100 gold)</option>
+                        <option value="Dragonbone Bow">Dragonbone Bow (120 gold)</option>
+                        <option value="Mithril Armor">Mithril Armor (150 gold)</option>
+                        <option value="Baby Gryphon">Baby Gryphon (160 gold)</option>
+                        <option value="Dire Wolf Pup">Dire Wolf Pup (170 gold)</option>
+                        <option value="Miniature Dragon">Miniature Dragon (190 gold)</option>
+                        <option value="Elixir of Immortality">Elixir of Immortality (200 gold)</option>
+                    </select>
+
+                </div>
+                <div id="buttonContainer">
+                    Buy or sell:
+                    <button id="buyButton">+1</button>
+                    <button id="sellButton">-1</button>
+                </div>
+            </div>
+
+            <!-- Holdings List -->
+            <div class="mt-4 bg-gray-800 p-4 rounded-lg max-h-64 overflow-y-auto">
+                <h2 class="text-lg font-bold">Your Holdings</h2>
+                <div id="holdings-list"></div>
             </div>
         </div>
         
@@ -92,6 +106,7 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="client/js/graph.js"></script>
     <script src="client/js/script.js"></script>
     <script>
         document.getElementById('account-btn').addEventListener('click', function() {
