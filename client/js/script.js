@@ -2,7 +2,7 @@ const socket = io();
 let assetData;
 let holdings;
 const marketHistory = [];
-let selectedAsset = "Enchanted Sword";
+let selectedAsset = "Healing Potion";
 
 let gold = 0;
 
@@ -62,7 +62,7 @@ document.getElementById("asset-dropdown")
 socket.on("assetData", function(data) {
   assetData = data;
   marketHistory.unshift(assetData);
-  if (marketHistory.length > 500)
+  if (marketHistory.length > 90)
     marketHistory.pop();
   updateMarketList();
 });

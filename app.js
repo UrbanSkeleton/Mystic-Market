@@ -54,6 +54,16 @@ class User {
       }
       this.sendUpdates();
     });
+
+    this.socket.on("sell", (data) => {
+      const value = assetList.assets[data.name].value;
+      const cost = value * data.amount;
+      if (this.ownedAssets[data.name] >= data.amount) {
+        this.gold += cost;
+        this.ownedAssets[data.name] -= data.amount;
+      }
+      this.sendUpdates();
+    });
   }
 
   sendHoldingUpdate() { this.socket.emit("holdingsUpdate", this.ownedAssets); }
@@ -80,7 +90,7 @@ class Asset {
 class AssetList {
   constructor() {
     this.assets = {};
-    this.updateTime = 30;
+    this.updateTime = 15;
   }
 
   addAsset(name, val) { this.assets[name] = new Asset(name, val); }
@@ -102,7 +112,7 @@ class AssetList {
       const asset = this.assets[name];
       asset.prev = asset.value;
 
-      asset.value += (asset.resting - asset.value) * 0.01;
+      asset.value += (asset.resting - asset.value) * 0.04;
 
       if (Math.random() < 0.1)
         asset.value += rand(-0.5, 0.5);
@@ -143,26 +153,36 @@ class AssetList {
           asset.value += rand(-8, 8);
         break;
       case 6:
-        asset.value *= rand(1.1, 2);
+        asset.value += rand(5, 20);
         if (Math.random < 0.1)
           asset.mode = Math.floor(3, 6);
+        if (asset.modeDuration > 4)
+          asset.modeDuration = Math.floor(rand(2, 4));
         break;
       case 7:
         asset.value *= rand(0.5, 0.9);
         if (Math.random < 0.1)
           asset.mode = Math.floor(0, 3);
+        if (asset.modeDuration > 4)
+          asset.modeDuration = Math.floor(rand(2, 4));
         break;
       }
 
-      if (asset.modeDuration-- <= 0)
+      if (asset.modeDuration-- <= 0) {
+        asset.modeDuration = Math.floor(rand(10, 200));
         if (Math.random() < 0.6)
           asset.mode = Math.floor(rand(0, 3));
         else
           asset.mode = Math.floor(rand(3, 6));
+      }
+
       else if (Math.random() < 0.03)
         asset.mode = Math.floor(rand(0, 3));
 
       asset.value = Math.max(1, asset.value);
+      asset.value = Math.min(asset.resting * 4, asset.value);
+
+      asset.value += rand(0, 2);
     }
   }
 }
@@ -190,187 +210,151 @@ assetList.addAsset("Miniature Dragon", 190);
 assetList.addAsset("Elixir of Immortality", 200);
 
 function update() {
-  const news = newsList[Math.floor(rand(0, newsList.length))];
-  for (let e of news.effects) {
-    assetList.assets[e.asset].mode = e.effect;
-    assetList.assets[e.asset].modeDuration = Math.floor(10, 200);
+  let news = null;
+  if (Math.random() < 0.3)
+    news = newsList[Math.floor(rand(0, newsList.length))];
+  if (news) {
+    for (let e of news.effects) {
+      assetList.assets[e.asset].mode = e.effect;
+      assetList.assets[e.asset].modeDuration = Math.floor(10, 200);
+    }
   }
 
   assetList.updateMarket();
   for (let id in userList) {
     userList[id].sendUpdates();
     userList[id].socket.emit("assetData", assetList.data);
-    userList[id].socket.emit("newEvent", news);
+    if (news)
+      userList[id].socket.emit("newEvent", news);
   }
 }
-
-setInterval(update, assetList.updateTime * 1000);
 
 const newsList = [
   {
     event : "📈 Legendary Blacksmith Returns",
     description :
-        "A master smith enhances enchanted swords, increasing demand.",
-    effects : [
-      {asset : "Enchanted Sword", effect : 6},
-      {asset : "Runed Shield", effect : 5}
-    ]
+        "A master smith enhances enchanted swords, slightly increasing demand.",
+    effects : [ {asset : "Enchanted Sword", effect : 1} ]
   },
   {
     event : "📉 Magic Ban Enforced",
     description :
-        "Local authorities outlaw enchanted weaponry, reducing value.",
+        "Local authorities outlaw enchanted weaponry, reducing value slightly.",
     effects : [
-      {asset : "Enchanted Sword", effect : 7},
-      {asset : "Cursed Dagger", effect : 4},
-      {asset : "Dragonbone Bow", effect : 7}
+      {asset : "Enchanted Sword", effect : 3},
+      {asset : "Cursed Dagger", effect : 3}
     ]
   },
   {
     event : "📈 Assassins' Guild Expansion",
-    description : "A rising demand for stealth weapons boosts prices.",
+    description :
+        "A rising demand for stealth weapons leads to a moderate increase in prices.",
     effects : [
-      {asset : "Cursed Dagger", effect : 6},
-      {asset : "Invisibility Draught", effect : 5}
+      {asset : "Cursed Dagger", effect : 2},
+      {asset : "Invisibility Draught", effect : 1}
     ]
   },
   {
     event : "📉 Curse Removal Ritual Discovered",
-    description : "A way to cleanse curses makes these daggers less desirable.",
-    effects : [
-      {asset : "Cursed Dagger", effect : 4},
-      {asset : "Shadow Essence", effect : 5}
-    ]
+    description :
+        "A way to cleanse curses makes these daggers slightly less desirable.",
+    effects : [ {asset : "Cursed Dagger", effect : 2} ]
   },
   {
     event : "📈 Dragon Sightings Increase",
     description :
         "More dragons mean more need for specialized hunting weapons.",
-    effects : [
-      {asset : "Dragonbone Bow", effect : 6},
-      {asset : "Miniature Dragon", effect : 5}
-    ]
+    effects : [ {asset : "Dragonbone Bow", effect : 2} ]
   },
   {
     event : "📉 Dragon Conservation Act",
-    description : "Hunting bans make dragonbone bows illegal in most regions.",
-    effects : [
-      {asset : "Dragonbone Bow", effect : 7},
-      {asset : "Phoenix Feather", effect : 4}
-    ]
+    description : "Hunting bans make dragonbone bows harder to sell.",
+    effects : [ {asset : "Dragonbone Bow", effect : 3} ]
   },
   {
     event : "📈 Ancient Rune Rediscovered",
-    description : "Scholars decipher old runes, improving the shield’s power.",
-    effects : [
-      {asset : "Runed Shield", effect : 5},
-      {asset : "Magic Scrolls", effect : 6}
-    ]
+    description :
+        "Scholars decipher old runes, slightly improving the shield’s power.",
+    effects : [ {asset : "Runed Shield", effect : 1} ]
   },
   {
     event : "📉 Magic Wane",
     description : "A surge of anti-magic energy weakens all enchanted items.",
     effects : [
-      {asset : "Runed Shield", effect : 7},
-      {asset : "Enchanted Sword", effect : 7},
-      {asset : "Magic Scrolls", effect : 4}
+      {asset : "Enchanted Sword", effect : 3},
+      {asset : "Runed Shield", effect : 3}, {asset : "Mana Elixir", effect : 3},
+      {asset : "Magic Scrolls", effect : 2}
     ]
   },
   {
     event : "📈 Dwarven Mines Reopen",
-    description : "A new source of mithril is found, increasing its utility.",
-    effects : [
-      {asset : "Mithril Armor", effect : 5},
-      {asset : "Ancient Relics", effect : 4}
-    ]
+    description :
+        "A new source of mithril is found, increasing its availability.",
+    effects : [ {asset : "Mithril Armor", effect : 1} ]
   },
   {
     event : "📉 Alchemy Breakthrough",
     description :
         "A synthetic alternative reduces the demand for true mithril.",
-    effects : [
-      {asset : "Mithril Armor", effect : 4},
-      {asset : "Elixir of Immortality", effect : 5}
-    ]
+    effects : [ {asset : "Mithril Armor", effect : 2} ]
   },
   {
     event : "📈 Outbreak of Plague",
     description : "The sick and injured scramble to buy potions.",
     effects : [
-      {asset : "Healing Potion", effect : 6},
-      {asset : "Troll’s Blood", effect : 5}
+      {asset : "Healing Potion", effect : 2},
+      {asset : "Troll’s Blood", effect : 1}
     ]
   },
   {
     event : "📉 Herbal Remedy Discovery",
-    description : "A cheaper alternative lowers demand.",
-    effects : [
-      {asset : "Healing Potion", effect : 5},
-      {asset : "Mana Elixir", effect : 4}
-    ]
+    description : "A cheaper alternative lowers demand for healing potions.",
+    effects : [ {asset : "Healing Potion", effect : 3} ]
   },
   {
     event : "📈 Mage Tournament Announced",
     description : "Demand surges as spellcasters prepare for competition.",
     effects : [
-      {asset : "Magic Scrolls", effect : 6}, {asset : "Mana Elixir", effect : 5}
+      {asset : "Mana Elixir", effect : 2}, {asset : "Magic Scrolls", effect : 1}
     ]
   },
   {
     event : "📉 Anti-Magic Zone Declared",
     description : "Many regions prohibit magic use, reducing sales.",
     effects : [
-      {asset : "Magic Scrolls", effect : 7}, {asset : "Mana Elixir", effect : 4}
+      {asset : "Mana Elixir", effect : 3}, {asset : "Magic Scrolls", effect : 3}
     ]
   },
   {
     event : "📈 Thieves' Guild War",
     description : "Criminals seek stealth solutions, driving up demand.",
-    effects : [
-      {asset : "Invisibility Draught", effect : 6},
-      {asset : "Cursed Dagger", effect : 5}
-    ]
+    effects : [ {asset : "Invisibility Draught", effect : 2} ]
   },
   {
     event : "📉 Anti-Invisibility Wards Installed",
     description : "Authorities deploy countermeasures, reducing effectiveness.",
-    effects : [
-      {asset : "Invisibility Draught", effect : 5},
-      {asset : "Shadow Essence", effect : 4}
-    ]
+    effects : [ {asset : "Invisibility Draught", effect : 3} ]
   },
   {
     event : "📈 Grand Lottery Opens",
     description : "Superstitious buyers hoard tonics for better odds.",
-    effects : [
-      {asset : "Luck Tonic", effect : 5},
-      {asset : "Starlit Crystal", effect : 4}
-    ]
+    effects : [ {asset : "Luck Tonic", effect : 1} ]
   },
   {
     event : "📉 Alchemy Fraud Exposed",
     description : "A scandal reveals that some tonics are mere sugar water.",
-    effects : [
-      {asset : "Luck Tonic", effect : 7},
-      {asset : "Elixir of Immortality", effect : 5}
-    ]
+    effects : [ {asset : "Luck Tonic", effect : 3} ]
   },
   {
     event : "📈 Ancient King Seeks Eternal Life",
     description : "A wealthy monarch is buying up all known stock.",
-    effects : [
-      {asset : "Elixir of Immortality", effect : 6},
-      {asset : "Phoenix Feather", effect : 5}
-    ]
+    effects : [ {asset : "Elixir of Immortality", effect : 2} ]
   },
   {
     event : "📉 Potion Side Effects Discovered",
     description :
         "Users report strange transformations instead of immortality.",
-    effects : [
-      {asset : "Elixir of Immortality", effect : 7},
-      {asset : "Troll’s Blood", effect : 4}
-    ]
+    effects : [ {asset : "Elixir of Immortality", effect : 3} ]
   },
   {
     event : "🔥 The Great Arcane Collapse",
@@ -454,3 +438,8 @@ const newsList = [
     ]
   }
 ];
+
+for (let i = 0; i < 10; i++)
+  update();
+
+setInterval(update, assetList.updateTime * 1000);
